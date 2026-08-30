@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#111318">
+  <meta name="color-scheme" content="dark light">
+  <meta id="theme-color" name="theme-color" content="#111318">
   <title>quicklook</title>
   <link rel="stylesheet" href="/style.css">
 </head>
@@ -12,7 +12,7 @@
   <aside class="sidebar">
     <div class="brand-row">
       <div class="logo" aria-hidden="true"><span></span></div>
-      <div><div class="brand">quicklook</div><div class="host-line"><i id="side-status"></i><span id="side-host">connecting</span></div></div>
+      <div><div class="brand">quicklook</div><div class="host-line"><span id="side-host">connecting</span></div></div>
     </div>
     <nav aria-label="Dashboard sections">
       <button class="nav-item active" data-view="overview" aria-current="page"><span>⌂</span>Overview</button>
@@ -23,7 +23,8 @@
     <footer>
       <div><span>Version</span><strong>v1.0.0</strong></div>
       <div><span>Host uptime</span><strong id="side-uptime">—</strong></div>
-      <a href="https://github.com/quicklook/quicklook" target="_blank" rel="noreferrer" aria-label="quicklook on GitHub">Source ↗</a>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch color theme"><span id="theme-icon" aria-hidden="true">◐</span><span id="theme-label">Light theme</span></button>
+      <a href="https://github.com/brendlij/quicklook" target="_blank" rel="noreferrer" aria-label="quicklook on GitHub">brendlij/quicklook ↗</a>
     </footer>
   </aside>
 
@@ -31,7 +32,7 @@
     <header class="topbar">
       <button id="menu" class="icon-button" aria-label="Open navigation">☰</button>
       <div><h1 id="view-title">Overview</h1><p id="host-detail" class="muted">Waiting for the first host sample…</p></div>
-      <div class="connection"><i></i><span id="connection-text">Connecting</span></div>
+      <div id="connection-warning" class="connection-warning" hidden>Updates paused</div>
     </header>
 
     <section id="overview" class="view active" aria-labelledby="view-title">
@@ -42,7 +43,7 @@
         <article class="stat"><div class="eyebrow">Uptime</div><div class="big small" id="uptime-value">—</div><p id="server-time">Server time unavailable</p></article>
       </div>
 
-      <div class="section-heading"><div><h2>Activity</h2><p>Rolling five-minute view</p></div><span class="live-pill">Live</span></div>
+      <div class="section-heading"><div><h2>Activity</h2><p>Rolling five-minute view</p></div></div>
       <div class="chart-grid">
         <article class="panel chart-panel"><div class="panel-head"><div><h3>Compute</h3><p>CPU and memory usage</p></div><div class="legend"><span class="cpu">CPU</span><span class="memory">Memory</span></div></div><div class="chart" id="compute-chart" role="img" aria-label="CPU and memory usage history"></div></article>
         <article class="panel chart-panel"><div class="panel-head"><div><h3>Traffic</h3><p>Host network throughput</p></div><strong id="network-current">—</strong></div><div class="chart" id="network-chart" role="img" aria-label="Network traffic history"></div></article>
@@ -85,4 +86,3 @@
   <script src="/app.js" defer></script>
 </body>
 </html>
-

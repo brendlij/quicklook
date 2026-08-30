@@ -5,6 +5,25 @@
   let snapshot = null;
   const charts = new Map();
 
+  function preferredTheme() {
+    try {
+      const saved = localStorage.getItem('quicklook-theme');
+      if (saved === 'dark' || saved === 'light') return saved;
+    } catch (_) { /* Storage can be unavailable in locked-down browsers. */ }
+    return matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+
+  function applyTheme(theme, persist = false) {
+    document.documentElement.dataset.theme = theme;
+    $('theme-color').content = theme === 'light' ? '#f3f4f6' : '#111318';
+    setText('theme-icon', theme === 'light' ? '●' : '◐');
+    setText('theme-label', theme === 'light' ? 'Dark theme' : 'Light theme');
+    $('theme-toggle').setAttribute('aria-label', `Switch to ${theme === 'light' ? 'dark' : 'light'} theme`);
+    if (persist) {
+      try { localStorage.setItem('quicklook-theme', theme); } catch (_) { /* Non-essential preference. */ }
+    }
+  }
+
   const fmt = {
     bytes(value, rate = false) {
       if (!Number.isFinite(value)) return '—';
@@ -98,21 +117,21 @@
 
   function render(data) {
     snapshot = data; const history = data.history || [];
-    setText('side-host', data.host.hostname || 'unknown host'); setText('side-uptime', fmt.duration(data.host.uptime)); $('side-status').classList.add('online');
+    setText('side-host', data.host.hostname || 'unknown host'); setText('side-uptime', fmt.duration(data.host.uptime));
     setText('host-detail', `${data.host.hostname || 'unknown'} · ${data.host.distribution || 'Linux'} · ${data.host.kernel || 'unknown kernel'} · ${data.host.architecture || ''}`);
     setText('cpu-value', fmt.percent(data.cpu.usage)); setText('cpu-temp', data.cpu.temperature == null ? 'No sensor' : `${data.cpu.temperature.toFixed(0)}°C`); setText('cpu-model', `${data.cpu.model} · ${data.cpu.cores} cores / ${data.cpu.threads} threads`);
     setText('memory-value', `${fmt.bytes(data.memory.used)} / ${fmt.bytes(data.memory.total)}`); setText('memory-percent', fmt.percent(data.memory.usage)); setText('memory-swap', data.memory.swap_total ? `Swap ${fmt.bytes(data.memory.swap_used)} / ${fmt.bytes(data.memory.swap_total)}` : 'No swap configured');
     setText('load-one', data.load.one.toFixed(2)); setText('load-five', data.load.five.toFixed(2)); setText('load-fifteen', data.load.fifteen.toFixed(2));
     setText('uptime-value', fmt.duration(data.host.uptime)); setText('server-time', `Sampled ${fmt.date(data.timestamp)}`);
     const cpu = history.map(p => p.cpu), memory = history.map(p => p.memory), rx = history.map(p => p.network_rx), tx = history.map(p => p.network_tx);
-    renderSpark('cpu-spark', cpu, '#7195bd'); renderSpark('memory-spark', memory, '#8c83ad');
-    renderChart('compute-chart', [{name:'CPU',values:cpu,color:'#7195bd'},{name:'Memory',values:memory,color:'#8c83ad'}], {max:100,suffix:'%'});
-    const networkSeries = [{name:'Download',values:rx,color:'#7195bd'},{name:'Upload',values:tx,color:'#8c83ad'}]; renderChart('network-chart', networkSeries, {bytes:true}); renderChart('network-full-chart', networkSeries, {bytes:true});
+    renderSpark('cpu-spark', cpu, 'var(--blue)'); renderSpark('memory-spark', memory, 'var(--violet)');
+    renderChart('compute-chart', [{name:'CPU',values:cpu,color:'var(--blue)'},{name:'Memory',values:memory,color:'var(--violet)'}], {max:100,suffix:'%'});
+    const networkSeries = [{name:'Download',values:rx,color:'var(--blue)'},{name:'Upload',values:tx,color:'var(--violet)'}]; renderChart('network-chart', networkSeries, {bytes:true}); renderChart('network-full-chart', networkSeries, {bytes:true});
     renderStorage(data); renderDocker(data); renderNetwork(data); document.body.classList.remove('loading');
   }
 
   function setConnection(online) {
-    document.querySelector('.connection').classList.toggle('online', online); setText('connection-text', online ? 'Live' : 'Reconnecting');
+    $('connection-warning').hidden = online;
   }
 
   function connect() {
@@ -130,6 +149,9 @@
   document.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => showView(button.dataset.view)));
   document.querySelectorAll('[data-jump]').forEach(button => button.addEventListener('click', () => showView(button.dataset.jump)));
   $('menu').addEventListener('click', () => document.querySelector('.sidebar').classList.toggle('open'));
+  $('theme-toggle').addEventListener('click', () => {
+    applyTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light', true);
+  });
 
   function openDrawer(id) {
     const item = snapshot?.docker.containers.find(container => container.id === id); if (!item) return;
@@ -146,7 +168,7 @@
   $('container-table').addEventListener('keydown', event => { const row = event.target.closest('tr[data-id]'); if (row && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); openDrawer(row.dataset.id); } });
   $('drawer-close').addEventListener('click', closeDrawer); $('backdrop').addEventListener('click', closeDrawer); document.addEventListener('keydown', event => { if (event.key === 'Escape') closeDrawer(); });
 
+  applyTheme(preferredTheme());
   const initialView = location.hash.slice(1); if (['containers','storage','network'].includes(initialView)) showView(initialView);
   connect();
 })();
-
