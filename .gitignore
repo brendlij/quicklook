@@ -1,0 +1,8 @@
+/quicklook
+/quicklook.exe
+/quicklook-*
+/.tmp-go-cache/
+*.log
+.idea/
+.vscode/
+.DS_Store

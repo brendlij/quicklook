@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#111318">
+  <title>quicklook</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="loading">
+  <aside class="sidebar">
+    <div class="brand-row">
+      <div class="logo" aria-hidden="true"><span></span></div>
+      <div><div class="brand">quicklook</div><div class="host-line"><i id="side-status"></i><span id="side-host">connecting</span></div></div>
+    </div>
+    <nav aria-label="Dashboard sections">
+      <button class="nav-item active" data-view="overview" aria-current="page"><span>⌂</span>Overview</button>
+      <button class="nav-item" data-view="containers"><span>▣</span>Containers</button>
+      <button class="nav-item" data-view="storage"><span>◫</span>Storage</button>
+      <button class="nav-item" data-view="network"><span>↕</span>Network</button>
+    </nav>
+    <footer>
+      <div><span>Version</span><strong>v1.0.0</strong></div>
+      <div><span>Host uptime</span><strong id="side-uptime">—</strong></div>
+      <a href="https://github.com/quicklook/quicklook" target="_blank" rel="noreferrer" aria-label="quicklook on GitHub">Source ↗</a>
+    </footer>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <button id="menu" class="icon-button" aria-label="Open navigation">☰</button>
+      <div><h1 id="view-title">Overview</h1><p id="host-detail" class="muted">Waiting for the first host sample…</p></div>
+      <div class="connection"><i></i><span id="connection-text">Connecting</span></div>
+    </header>
+
+    <section id="overview" class="view active" aria-labelledby="view-title">
+      <div class="stat-grid">
+        <article class="stat"><div class="eyebrow">CPU <span id="cpu-temp">—</span></div><div class="big" id="cpu-value">—</div><p id="cpu-model">Reading processor</p><div class="spark" id="cpu-spark"></div></article>
+        <article class="stat"><div class="eyebrow">Memory <span id="memory-percent">—</span></div><div class="big small" id="memory-value">—</div><p id="memory-swap">Reading memory</p><div class="spark" id="memory-spark"></div></article>
+        <article class="stat"><div class="eyebrow">Load average</div><div class="load-values"><strong id="load-one">—</strong><span id="load-five">—</span><span id="load-fifteen">—</span></div><p>1, 5 and 15 minute averages</p></article>
+        <article class="stat"><div class="eyebrow">Uptime</div><div class="big small" id="uptime-value">—</div><p id="server-time">Server time unavailable</p></article>
+      </div>
+
+      <div class="section-heading"><div><h2>Activity</h2><p>Rolling five-minute view</p></div><span class="live-pill">Live</span></div>
+      <div class="chart-grid">
+        <article class="panel chart-panel"><div class="panel-head"><div><h3>Compute</h3><p>CPU and memory usage</p></div><div class="legend"><span class="cpu">CPU</span><span class="memory">Memory</span></div></div><div class="chart" id="compute-chart" role="img" aria-label="CPU and memory usage history"></div></article>
+        <article class="panel chart-panel"><div class="panel-head"><div><h3>Traffic</h3><p>Host network throughput</p></div><strong id="network-current">—</strong></div><div class="chart" id="network-chart" role="img" aria-label="Network traffic history"></div></article>
+      </div>
+
+      <div class="overview-lower">
+        <article class="panel"><div class="panel-head"><div><h3>Storage</h3><p id="disk-throughput">Disk activity unavailable</p></div><button class="text-button" data-jump="storage">View all</button></div><div id="storage-preview" class="storage-list skeleton-lines"></div></article>
+        <article class="panel docker-summary"><div class="panel-head"><div><h3>Docker</h3><p id="docker-message">Checking Docker socket</p></div><button class="text-button" data-jump="containers">View all</button></div><div class="docker-counts"><div><strong id="docker-running">—</strong><span>running</span></div><div><strong id="docker-stopped">—</strong><span>stopped</span></div></div><div id="container-preview" class="mini-containers"></div></article>
+      </div>
+    </section>
+
+    <section id="containers" class="view">
+      <div class="page-intro"><div><h2>Containers</h2><p>Read-only state from the Docker Engine</p></div><span id="docker-badge" class="badge">Detecting</span></div>
+      <div class="table-wrap panel"><table><thead><tr><th>Name</th><th>Status</th><th>CPU</th><th>Memory</th><th>Network RX</th><th>Network TX</th><th>Started</th><th>Restarts</th></tr></thead><tbody id="container-table"><tr><td colspan="8" class="empty">Waiting for Docker…</td></tr></tbody></table></div>
+    </section>
+
+    <section id="storage" class="view">
+      <div class="page-intro"><div><h2>Storage</h2><p>Mounted host filesystems and aggregate I/O</p></div><div class="io-pills"><span>Read <strong id="disk-read">—</strong></span><span>Write <strong id="disk-write">—</strong></span></div></div>
+      <div id="storage-full" class="storage-grid"></div>
+    </section>
+
+    <section id="network" class="view">
+      <div class="page-intro"><div><h2>Network</h2><p>Relevant host interfaces</p></div></div>
+      <div class="network-hero"><div><span>Download</span><strong id="net-down">—</strong></div><div><span>Upload</span><strong id="net-up">—</strong></div></div>
+      <article class="panel chart-panel wide"><div class="panel-head"><div><h3>Throughput</h3><p>Download and upload rate</p></div><div class="legend"><span class="rx">Download</span><span class="tx">Upload</span></div></div><div class="chart" id="network-full-chart"></div></article>
+      <div class="section-heading"><div><h2>Interfaces</h2><p>Addresses, state and totals</p></div></div>
+      <div id="interfaces" class="interface-grid"></div>
+    </section>
+  </main>
+
+  <div id="backdrop" class="backdrop" hidden></div>
+  <aside id="drawer" class="drawer" aria-hidden="true" aria-labelledby="drawer-name">
+    <button id="drawer-close" class="icon-button close" aria-label="Close details">×</button>
+    <div class="eyebrow">Container details</div><h2 id="drawer-name">—</h2><p id="drawer-image" class="muted">—</p>
+    <div id="drawer-state" class="drawer-state"></div><dl id="drawer-details"></dl>
+    <div><h3>Exposed ports</h3><div id="drawer-ports" class="ports"></div></div>
+    <p class="readonly-note">quicklook is read-only. Container controls are intentionally not available.</p>
+  </aside>
+  <div id="tooltip" class="tooltip" hidden></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
+
