@@ -10,6 +10,5 @@ RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w -X main.version=
 
 FROM scratch
 COPY --from=build /quicklook /quicklook
-EXPOSE 8080
+EXPOSE 7373
 ENTRYPOINT ["/quicklook"]
-

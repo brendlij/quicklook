@@ -20,7 +20,7 @@ type Config struct {
 func Load() Config {
 	interval := durationEnv("QUICKLOOK_INTERVAL", 2*time.Second)
 	return Config{
-		Port:           env("QUICKLOOK_PORT", "8080"),
+		Port:           env("QUICKLOOK_PORT", "7373"),
 		HostProc:       env("QUICKLOOK_HOST_PROC", "/proc"),
 		HostSys:        env("QUICKLOOK_HOST_SYS", "/sys"),
 		HostRoot:       env("QUICKLOOK_HOST_ROOT", "/"),

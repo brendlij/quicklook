@@ -1,20 +1,18 @@
 services:
   quicklook:
-    build:
-      context: .
-      args:
-        VERSION: local
+    image: ghcr.io/brendlij/quicklook:latest
+    pull_policy: always
     container_name: quicklook
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "7373:7373"
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/host/root:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
+      QUICKLOOK_PORT: 7373
       QUICKLOOK_HOST_PROC: /host/proc
       QUICKLOOK_HOST_SYS: /host/sys
       QUICKLOOK_HOST_ROOT: /host/root
-

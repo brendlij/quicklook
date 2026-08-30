@@ -4,7 +4,7 @@
 
 quicklook is an extremely lightweight, self-hosted Linux server dashboard. It reads host metrics directly from `/proc` and `/sys`, talks to the Docker Engine over its Unix socket, and serves a polished live interface from one Go binary. There is no database, monitoring stack, frontend runtime, or configuration ceremony.
 
-> Screenshot placeholder — run quicklook and capture the Overview page at `http://localhost:8080`.
+> Screenshot placeholder — run quicklook and capture the Overview page at `http://localhost:7373`.
 
 ## Features
 
@@ -22,7 +22,7 @@ quicklook is an extremely lightweight, self-hosted Linux server dashboard. It re
 docker compose up -d
 ```
 
-Open [http://localhost:8080](http://localhost:8080).
+Open [http://localhost:7373](http://localhost:7373).
 
 The included Compose file mounts the host metric filesystems and Docker socket read-only. It does not require privileged mode.
 
@@ -32,7 +32,7 @@ To run without Docker visibility, remove the Docker socket volume and set `QUICK
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `QUICKLOOK_PORT` | `8080` | HTTP listen port |
+| `QUICKLOOK_PORT` | `7373` | HTTP listen port |
 | `QUICKLOOK_HOST_PROC` | `/proc` | Host procfs path |
 | `QUICKLOOK_HOST_SYS` | `/sys` | Host sysfs path |
 | `QUICKLOOK_HOST_ROOT` | `/` | Host root used for filesystem usage and OS metadata |
@@ -89,10 +89,10 @@ docker build --build-arg VERSION=dev -t quicklook .
 The included GitHub Actions workflow validates the multi-platform image on pull requests and publishes `linux/amd64` and `linux/arm64` images to GitHub Container Registry on pushes to `main` and tags matching `v*`.
 
 ```sh
-docker pull ghcr.io/OWNER/quicklook:latest
+docker pull ghcr.io/brendlij/quicklook:latest
 ```
 
-Replace `OWNER` with the GitHub user or organization that owns the repository. A tag such as `v1.2.3` also publishes `1.2.3` and `1.2` image tags. The workflow authenticates with the repository-provided `GITHUB_TOKEN`; no registry secret is required.
+A tag such as `v1.2.3` also publishes `1.2.3` and `1.2` image tags. The workflow authenticates with the repository-provided `GITHUB_TOKEN`; no registry secret is required.
 
 The first GHCR package is private by default. To allow anonymous `docker pull`, open the package settings on GitHub and change its visibility to public.
 
